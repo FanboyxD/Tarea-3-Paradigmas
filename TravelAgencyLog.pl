@@ -129,6 +129,7 @@ frase_ubicacion --> [me, hallo, en].
 ciudad_palabra(P) :- member(P, [san, jose, costa, rica, panama, frankfurt, miami, arizona, mexico, bogota, lima, dallas, toronto, atlanta, los, angeles, madrid, londres, paris]).
 
 ciudad(sjo) --> [san, jose].
+ciudad(sjo) --> [san, jose, costa, rica].
 ciudad(pty) --> [panama].
 ciudad(phx) --> [arizona].
 ciudad(mia) --> [miami].
