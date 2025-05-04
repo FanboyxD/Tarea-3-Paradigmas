@@ -1,4 +1,4 @@
-﻿% Definición de la base de datos con enfoque de grafo -----------------------------------------
+% Definición de la base de datos con enfoque de grafo -----------------------------------------
 % Los aeropuertos son los nodos y los vuelos son los arcos
 % Aeropuertos: aeropuerto(NombreLargo, Codigo).
 aeropuerto('San José, Costa Rica', sjo).
@@ -319,15 +319,15 @@ arista_filtrada(Origen, Destino, vuelo(Num, Aer, Cla, Cos, Dur, Tipo), TipoFiltr
 
 % Búsqueda de vuelos directos que cumplen los filtros
 buscar_vuelos_directos(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
-    findall([Num, Origen, Destino, Aer, Cla, Cos, Dur, Tipo],
-            arista_filtrada(Origen, Destino, vuelo(Num, Aer, Cla, Cos, Dur, Tipo), TipoFiltro, AerFiltro, ClaFiltro, Pres),
+    findall([Origen, [Destino, Aer, Num, Dur, Cos]],
+            arista_filtrada(Origen, Destino, vuelo(Num, Aer, _, Cos, Dur, _), TipoFiltro, AerFiltro, ClaFiltro, Pres),
             Vuelos).
 
 % Búsqueda de vuelos con una escala que cumplen los filtros
 buscar_vuelos_con_escala(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
-    findall([Num1, Origen, Escala, Aer1, Cla1, Cos1, Dur1, Tipo1, Num2, Escala, Destino, Aer2, Cla2, Cos2, Dur2, Tipo2],
-            (arista_filtrada(Origen, Escala, vuelo(Num1, Aer1, Cla1, Cos1, Dur1, Tipo1), TipoFiltro, AerFiltro, ClaFiltro, _),
-             arista_filtrada(Escala, Destino, vuelo(Num2, Aer2, Cla2, Cos2, Dur2, Tipo2), TipoFiltro, AerFiltro, ClaFiltro, _),
+    findall([Origen, [Escala, Aer1, Num1, Dur1, Cos1], [Destino, Aer2, Num2, Dur2, Cos2]],
+            (arista_filtrada(Origen, Escala, vuelo(Num1, Aer1, Cla1, Cos1, Dur1, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala, Destino, vuelo(Num2, Aer2, Cla2, Cos2, Dur2, _), TipoFiltro, AerFiltro, ClaFiltro, _),
              Escala \= Destino, Escala \= Origen,  % Asegurarnos que la escala no sea ni origen ni destino
              % Verificación conjunta del presupuesto
              CostoTotal is Cos1 + Cos2,
@@ -337,14 +337,75 @@ buscar_vuelos_con_escala(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres
              ((var(ClaFiltro) ; Cla1 = ClaFiltro ; Cla2 = ClaFiltro))
             ),
             Vuelos).
+% Búsqueda de vuelos con dos escalas que cumplen los filtros
+buscar_vuelos_con_dos_escalas(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
+    findall([Origen, [Escala1, Aer1, Num1, Dur1, Cos1], [Escala2, Aer2, Num2, Dur2, Cos2], [Destino, Aer3, Num3, Dur3, Cos3]],
+            (arista_filtrada(Origen, Escala1, vuelo(Num1, Aer1, Cla1, Cos1, Dur1, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala1, Escala2, vuelo(Num2, Aer2, Cla2, Cos2, Dur2, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala2, Destino, vuelo(Num3, Aer3, Cla3, Cos3, Dur3, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             % Asegurarnos que las escalas no repitan aeropuertos
+             Escala1 \= Destino, Escala1 \= Origen, Escala1 \= Escala2,
+             Escala2 \= Destino, Escala2 \= Origen,
+             % Verificación conjunta del presupuesto
+             CostoTotal is Cos1 + Cos2 + Cos3,
+             (var(Pres) ; (number(Pres), CostoTotal =< Pres)),
+             % Para flexibilidad, permitimos que al menos uno de los vuelos cumpla con preferencias específicas
+             ((var(AerFiltro) ; Aer1 = AerFiltro ; Aer2 = AerFiltro ; Aer3 = AerFiltro)),
+             ((var(ClaFiltro) ; Cla1 = ClaFiltro ; Cla2 = ClaFiltro ; Cla3 = ClaFiltro))
+            ),
+            Vuelos).
 
+% Búsqueda de vuelos con tres escalas que cumplen los filtros
+buscar_vuelos_con_tres_escalas(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
+    findall([Origen, [Escala1, Aer1, Num1, Dur1, Cos1], [Escala2, Aer2, Num2, Dur2, Cos2],
+             [Escala3, Aer3, Num3, Dur3, Cos3], [Destino, Aer4, Num4, Dur4, Cos4]],
+            (arista_filtrada(Origen, Escala1, vuelo(Num1, Aer1, Cla1, Cos1, Dur1, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala1, Escala2, vuelo(Num2, Aer2, Cla2, Cos2, Dur2, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala2, Escala3, vuelo(Num3, Aer3, Cla3, Cos3, Dur3, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala3, Destino, vuelo(Num4, Aer4, Cla4, Cos4, Dur4, _), TipoFiltro, AerFiltro, ClaFiltro, _),
+             % Asegurarnos que las escalas no repitan aeropuertos
+             Escala1 \= Destino, Escala1 \= Origen, Escala1 \= Escala2, Escala1 \= Escala3,
+             Escala2 \= Destino, Escala2 \= Origen, Escala2 \= Escala3,
+             Escala3 \= Destino, Escala3 \= Origen,
+             % Verificación conjunta del presupuesto
+             CostoTotal is Cos1 + Cos2 + Cos3 + Cos4,
+             (var(Pres) ; (number(Pres), CostoTotal =< Pres)),
+             % Para flexibilidad, permitimos que al menos uno de los vuelos cumpla con preferencias específicas
+             ((var(AerFiltro) ; Aer1 = AerFiltro ; Aer2 = AerFiltro ; Aer3 = AerFiltro ; Aer4 = AerFiltro)),
+             ((var(ClaFiltro) ; Cla1 = ClaFiltro ; Cla2 = ClaFiltro ; Cla3 = ClaFiltro ; Cla4 = ClaFiltro))
+            ),
+            Vuelos).
 % Ordenar por duración
 ordenar_por_duracion(VuelosDirectos, VuelosOrdenados) :-
     predsort(comparar_duracion, VuelosDirectos, VuelosOrdenados).
 
+% Ordenar por duración total para vuelos con dos escalas
+ordenar_por_duracion_dos_escalas(VuelosEscala, VuelosOrdenados) :-
+    predsort(comparar_duracion_dos_escalas, VuelosEscala, VuelosOrdenados).
+
+% Ordenar por duración total para vuelos con tres escalas
+ordenar_por_duracion_tres_escalas(VuelosEscala, VuelosOrdenados) :-
+    predsort(comparar_duracion_tres_escalas, VuelosEscala, VuelosOrdenados).
+
 % Comparador de duración para vuelos directos
-comparar_duracion(Orden, [_, _, _, _, _, _, Dur1, _], [_, _, _, _, _, _, Dur2, _]) :-
+comparar_duracion(Orden, [_, [_, _, _, Dur1, _]], [_, [_, _, _, Dur2, _]]) :-
     (Dur1 < Dur2 -> Orden = (<) ; Orden = (>)).
+
+% Comparador de duración para vuelos con dos escalas
+comparar_duracion_dos_escalas(Orden,
+    [_, [_, _, _, Dur1, _], [_, _, _, Dur2, _], [_, _, _, Dur3, _]],
+    [_, [_, _, _, Dur4, _], [_, _, _, Dur5, _], [_, _, _, Dur6, _]]) :-
+    DurTotal1 is Dur1 + Dur2 + Dur3,
+    DurTotal2 is Dur4 + Dur5 + Dur6,
+    (DurTotal1 < DurTotal2 -> Orden = (<) ; Orden = (>)).
+
+% Comparador de duración para vuelos con tres escalas
+comparar_duracion_tres_escalas(Orden,
+    [_, [_, _, _, Dur1, _], [_, _, _, Dur2, _], [_, _, _, Dur3, _], [_, _, _, Dur4, _]],
+    [_, [_, _, _, Dur5, _], [_, _, _, Dur6, _], [_, _, _, Dur7, _], [_, _, _, Dur8, _]]) :-
+    DurTotal1 is Dur1 + Dur2 + Dur3 + Dur4,
+    DurTotal2 is Dur5 + Dur6 + Dur7 + Dur8,
+    (DurTotal1 < DurTotal2 -> Orden = (<) ; Orden = (>)).
 
 % Ordenar por duración total para vuelos con escala
 ordenar_por_duracion_escala(VuelosEscala, VuelosOrdenados) :-
@@ -352,13 +413,13 @@ ordenar_por_duracion_escala(VuelosEscala, VuelosOrdenados) :-
 
 % Comparador de duración para vuelos con escala
 comparar_duracion_escala(Orden,
-    [_, _, _, _, _, _, Dur1, _, _, _, _, _, _, Dur2, _, _],
-    [_, _, _, _, _, _, Dur3, _, _, _, _, _, _, Dur4, _, _]) :-
+    [_, [_, _, _, Dur1, _], [_, _, _, Dur2, _]],
+    [_, [_, _, _, Dur3, _], [_, _, _, Dur4, _]]) :-
     DurTotal1 is Dur1 + Dur2,
     DurTotal2 is Dur3 + Dur4,
     (DurTotal1 < DurTotal2 -> Orden = (<) ; Orden = (>)).
 
-% BÚSQUEDA PRINCIPAL DE VUELOS -----------------------------------------
+% BÚSQUEDA PRINCIPAL DE VUELOS  -----------------------------------------
 
 buscar_vuelo :-
     origen(O), destino(D),
@@ -380,17 +441,26 @@ buscar_vuelo :-
     (VuelosDirectos \= [] ->
         writeln("¡Encontré vuelos directos que cumplen con sus requisitos!"),
         % Seleccionamos el mejor vuelo
-        VuelosDirectos = [[Num, O, D, Aer, Cla, Cos, Dur, Tipo] | _],
+        VuelosDirectos = [[Origen, [Destino, Aero, NumVuelo, Duracion, Costo]] | _],
+
+        % Obtener nombres completos de los aeropuertos para mejor presentación
+        aeropuerto(NombreOrigen, Origen),
+        aeropuerto(NombreDestino, Destino),
+
         (PriorizarDuracion = si ->
-            format("Su vuelo más rápido sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas (~w). Gracias por usar TravelAgencyLog.~n",
-                   [Num, O, D, Aer, Cla, Cos, Dur, Tipo])
+            format("Su vuelo más rápido sería: ", [])
         ;
-            format("Su vuelo sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas (~w). Gracias por usar TravelAgencyLog.~n",
-                   [Num, O, D, Aer, Cla, Cos, Dur, Tipo])
-        )
+            format("Su vuelo recomendado sería: ", [])
+        ),
+
+        % Presentación detallada para el usuario
+        format("volar desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w.~n",
+               [NombreOrigen, Origen, NombreDestino, Destino, NumVuelo, Aero, Duracion, Costo]),
+
+        writeln("Gracias por usar TravelAgencyLog.")
     ;
         writeln("No hay vuelos directos disponibles, buscando vuelos con escala..."),
-        % Buscar vuelos con escala
+        % Buscar vuelos con una escala
         buscar_vuelos_con_escala(O, D, TipoFiltro, AerolineaPref, ClasePref, Pres, VuelosEscalaNoOrdenados),
 
         % Ordenar por duración total si corresponde
@@ -400,19 +470,128 @@ buscar_vuelo :-
             VuelosEscala = VuelosEscalaNoOrdenados
         ),
 
-        % Verificar si encontramos vuelos con escala
-        (VuelosEscala = [] ->
-            writeln("Lamentablemente no tenemos un vuelo que se ajuste a sus necesidades. Muchas gracias por utilizar TravelAgencyLog.")
-        ;
-            VuelosEscala = [[Num1, O, M, Aer1, Cla1, Cos1, Dur1, Tipo1, Num2, M, D, Aer2, Cla2, Cos2, Dur2, Tipo2] | _],
-            TotalCost is Cos1 + Cos2,
-            DurTotal is Dur1 + Dur2,
+        % Verificar si encontramos vuelos con una escala
+        (VuelosEscala \= [] ->
+            writeln("¡Encontré vuelos con una escala que cumplen con sus requisitos!"),
+            VuelosEscala = [[Origen, [Escala, Aero1, NumVuelo1, Duracion1, Costo1], [Destino, Aero2, NumVuelo2, Duracion2, Costo2]] | _],
+
+            % Obtener nombres completos de los aeropuertos para mejor presentación
+            aeropuerto(NombreOrigen, Origen),
+            aeropuerto(NombreEscala, Escala),
+            aeropuerto(NombreDestino, Destino),
+
+            CostoTotal is Costo1 + Costo2,
+            DuracionTotal is Duracion1 + Duracion2,
+
             (PriorizarDuracion = si ->
-                format("Su vuelo más rápido sería: ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
-                    [Num1, O, M, Aer1, Cla1, Tipo1, Dur1, Num2, M, D, Aer2, Cla2, Tipo2, Dur2, TotalCost, DurTotal])
+                format("Su ruta más rápida sería: ",[])
             ;
-                format("Su vuelo sería: ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
-                    [Num1, O, M, Aer1, Cla1, Tipo1, Dur1, Num2, M, D, Aer2, Cla2, Tipo2, Dur2, TotalCost, DurTotal])
+                format("Su ruta recomendada sería: ", [])
+            ),
+
+            % Presentación detallada para el usuario
+            format("volar desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                   [NombreOrigen, Origen, NombreEscala, Escala, NumVuelo1, Aero1, Duracion1, Costo1]),
+            format("y luego desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w.~n",
+                   [NombreEscala, Escala, NombreDestino, Destino, NumVuelo2, Aero2, Duracion2, Costo2]),
+            format("Duración total: ~w horas. Costo total: $~w.~n", [DuracionTotal, CostoTotal]),
+
+            writeln("Gracias por usar TravelAgencyLog.")
+        ;
+            writeln("No hay vuelos con una escala disponibles, buscando vuelos con dos escalas..."),
+            % Buscar vuelos con dos escalas
+            buscar_vuelos_con_dos_escalas(O, D, TipoFiltro, AerolineaPref, ClasePref, Pres, VuelosDosEscalasNoOrdenados),
+
+            % Ordenar por duración total si corresponde
+            (PriorizarDuracion = si ->
+                ordenar_por_duracion_dos_escalas(VuelosDosEscalasNoOrdenados, VuelosDosEscalas)
+            ;
+                VuelosDosEscalas = VuelosDosEscalasNoOrdenados
+            ),
+
+            % Verificar si encontramos vuelos con dos escalas
+            (VuelosDosEscalas \= [] ->
+                writeln("¡Encontré vuelos con dos escalas que cumplen con sus requisitos!"),
+                VuelosDosEscalas = [[Origen, [Escala1, Aero1, NumVuelo1, Duracion1, Costo1],
+                                     [Escala2, Aero2, NumVuelo2, Duracion2, Costo2],
+                                     [Destino, Aero3, NumVuelo3, Duracion3, Costo3]] | _],
+
+                % Obtener nombres completos de los aeropuertos para mejor presentación
+                aeropuerto(NombreOrigen, Origen),
+                aeropuerto(NombreEscala1, Escala1),
+                aeropuerto(NombreEscala2, Escala2),
+                aeropuerto(NombreDestino, Destino),
+
+                CostoTotal is Costo1 + Costo2 + Costo3,
+                DuracionTotal is Duracion1 + Duracion2 + Duracion3,
+
+                (PriorizarDuracion = si ->
+                    format("Su ruta más rápida sería: ",[])
+                ;
+                    format("Su ruta recomendada sería: ", [])
+                ),
+
+                % Presentación detallada para el usuario
+                format("volar desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                       [NombreOrigen, Origen, NombreEscala1, Escala1, NumVuelo1, Aero1, Duracion1, Costo1]),
+                format("luego desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                       [NombreEscala1, Escala1, NombreEscala2, Escala2, NumVuelo2, Aero2, Duracion2, Costo2]),
+                format("y finalmente desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w.~n",
+                       [NombreEscala2, Escala2, NombreDestino, Destino, NumVuelo3, Aero3, Duracion3, Costo3]),
+                format("Duración total: ~w horas. Costo total: $~w.~n", [DuracionTotal, CostoTotal]),
+
+                writeln("Gracias por usar TravelAgencyLog.")
+            ;
+                writeln("No hay vuelos con dos escalas disponibles, buscando vuelos con tres escalas..."),
+                % Buscar vuelos con tres escalas
+                buscar_vuelos_con_tres_escalas(O, D, TipoFiltro, AerolineaPref, ClasePref, Pres, VuelosTresEscalasNoOrdenados),
+
+                % Ordenar por duración total si corresponde
+                (PriorizarDuracion = si ->
+                    ordenar_por_duracion_tres_escalas(VuelosTresEscalasNoOrdenados, VuelosTresEscalas)
+                ;
+                    VuelosTresEscalas = VuelosTresEscalasNoOrdenados
+                ),
+
+                % Verificar si encontramos vuelos con tres escalas
+                (VuelosTresEscalas \= [] ->
+                    writeln("¡Encontré vuelos con tres escalas que cumplen con sus requisitos!"),
+                    VuelosTresEscalas = [[Origen, [Escala1, Aero1, NumVuelo1, Duracion1, Costo1],
+                                         [Escala2, Aero2, NumVuelo2, Duracion2, Costo2],
+                                         [Escala3, Aero3, NumVuelo3, Duracion3, Costo3],
+                                         [Destino, Aero4, NumVuelo4, Duracion4, Costo4]] | _],
+
+                    % Obtener nombres completos de los aeropuertos para mejor presentación
+                    aeropuerto(NombreOrigen, Origen),
+                    aeropuerto(NombreEscala1, Escala1),
+                    aeropuerto(NombreEscala2, Escala2),
+                    aeropuerto(NombreEscala3, Escala3),
+                    aeropuerto(NombreDestino, Destino),
+
+                    CostoTotal is Costo1 + Costo2 + Costo3 + Costo4,
+                    DuracionTotal is Duracion1 + Duracion2 + Duracion3 + Duracion4,
+
+                    (PriorizarDuracion = si ->
+                        format("Su ruta más rápida sería: ",[])
+                    ;
+                        format("Su ruta recomendada sería: ", [])
+                    ),
+
+                    % Presentación detallada para el usuario
+                    format("volar desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                           [NombreOrigen, Origen, NombreEscala1, Escala1, NumVuelo1, Aero1, Duracion1, Costo1]),
+                    format("luego desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                           [NombreEscala1, Escala1, NombreEscala2, Escala2, NumVuelo2, Aero2, Duracion2, Costo2]),
+                    format("después desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w,~n",
+                           [NombreEscala2, Escala2, NombreEscala3, Escala3, NumVuelo3, Aero3, Duracion3, Costo3]),
+                    format("y finalmente desde ~w (~w) hasta ~w (~w) en el vuelo ~w de ~w, con una duración de ~w horas y un costo de $~w.~n",
+                           [NombreEscala3, Escala3, NombreDestino, Destino, NumVuelo4, Aero4, Duracion4, Costo4]),
+                    format("Duración total: ~w horas. Costo total: $~w.~n", [DuracionTotal, CostoTotal]),
+
+                    writeln("Gracias por usar TravelAgencyLog.")
+                ;
+                    writeln("Lamentablemente no tenemos un vuelo que se ajuste a sus necesidades. Muchas gracias por utilizar TravelAgencyLog.")
+                )
             )
         )
     ).
