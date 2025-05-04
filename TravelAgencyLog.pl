@@ -1,61 +1,6 @@
-﻿% Definicion de base de datos -----------------------------------------
-% Hechos: vuelo(Numero, Origen, Destino, Aerolinea, Clase, Costo, Duracion, Tipo).
-vuelo(cm404, sjo, pty, avianca, negocios, 500, 1, comercial).
-vuelo(cm405, sjo, pty, copa, negocios, 1500, 1, charter).
-vuelo(cm406, sjo, pty, american, economica, 500, 1, comercial).
-vuelo(ua105, pty, phx, united, economica, 900, 6, comercial).
-vuelo(ua106, pty, phx, united, negocios, 1900, 6, charter).
-vuelo(ua107, pty, phx, copa, economica, 900, 6, comercial).
-vuelo(ta321, sjo, mia, avianca, economica, 450, 3, comercial).
-vuelo(aa876, mia, phx, american, negocios, 1300, 5, comercial).
-vuelo(ch101, sjo, phx, charter_air, economica, 1100, 7, charter).
-vuelo(ch202, sjo, pty, charter_air, negocios, 1200, 1, charter).
-vuelo(ua777, pty, phx, united, negocios, 1500, 6, comercial).
-vuelo(lh450, sjo, fra, lufthansa, negocios, 2000, 11, comercial).
-vuelo(fra203, fra, phx, united, economica, 1300, 12, comercial).
-vuelo(am888, sjo, mex, aeromexico, economica, 400, 2, comercial).
-vuelo(cp201, sjo, bog, copa, economica, 350, 2, comercial).
-vuelo(av450, sjo, bog, avianca, negocios, 550, 2, comercial).
-vuelo(la302, sjo, lim, latam, economica, 480, 3, comercial).
-vuelo(la303, sjo, lim, latam, negocios, 780, 3, comercial).
-vuelo(aa201, sjo, dfw, american, economica, 650, 4, comercial).
-vuelo(ac100, sjo, yyz, air_canada, negocios, 900, 5, comercial).
-
-% Vuelos desde aeropuertos intermedios a destinos finales
-vuelo(av451, bog, mia, avianca, economica, 400, 3, comercial).
-vuelo(av452, bog, mia, avianca, negocios, 800, 3, comercial).
-vuelo(la305, lim, phx, latam, economica, 750, 7, comercial).
-vuelo(la306, lim, phx, latam, negocios, 1400, 7, comercial).
-vuelo(aa202, dfw, phx, american, economica, 300, 2, comercial).
-vuelo(aa203, dfw, phx, american, negocios, 600, 2, comercial).
-vuelo(ac101, yyz, phx, air_canada, economica, 450, 4, comercial).
-
-% Vuelos desde mia a otros destinos
-vuelo(dl401, mia, atl, delta, economica, 200, 2, comercial).
-vuelo(dl402, mia, atl, delta, negocios, 500, 2, comercial).
-vuelo(dl403, atl, phx, delta, economica, 300, 3, comercial).
-vuelo(dl404, atl, phx, delta, negocios, 700, 3, comercial).
-
-% Vuelos desde mex a otros destinos
-vuelo(am889, mex, lax, aeromexico, economica, 350, 3, comercial).
-vuelo(am890, mex, phx, aeromexico, economica, 320, 3, comercial).
-vuelo(am891, mex, phx, aeromexico, negocios, 720, 3, comercial).
-
-% Vuelos chárter adicionales
-vuelo(ch103, sjo, bog, charter_air, negocios, 800, 2, charter).
-vuelo(ch104, bog, phx, charter_air, negocios, 1500, 8, charter).
-vuelo(ch105, sjo, mex, charter_air, economica, 750, 2, charter).
-vuelo(pr100, pty, lim, priority_air, negocios, 900, 3, charter).
-vuelo(pr101, lim, fra, priority_air, negocios, 2200, 12, charter).
-
-% Conexiones europeas adicionales
-vuelo(lh451, fra, mad, lufthansa, economica, 200, 2, comercial).
-vuelo(lh452, mad, mia, lufthansa, economica, 800, 9, comercial).
-vuelo(ba100, lhr, phx, british_airways, negocios, 1700, 10, comercial).
-vuelo(af200, cdg, mia, air_france, economica, 900, 8, comercial).
-vuelo(af201, sjo, cdg, air_france, negocios, 1800, 10, comercial).
-
-% aeropuerto(NombreLargo, Codigo).
+﻿% Definición de la base de datos con enfoque de grafo -----------------------------------------
+% Los aeropuertos son los nodos y los vuelos son los arcos
+% Aeropuertos: aeropuerto(NombreLargo, Codigo).
 aeropuerto('San José, Costa Rica', sjo).
 aeropuerto('Panamá', pty).
 aeropuerto('Miami, EE.UU.', mia).
@@ -71,6 +16,54 @@ aeropuerto('Los Angeles, EE.UU.', lax).
 aeropuerto('Madrid, España', mad).
 aeropuerto('Londres, Reino Unido', lhr).
 aeropuerto('París, Francia', cdg).
+
+% Arcos: arco(Origen, Destino, Vuelo).
+% Donde Vuelo es vuelo(Numero, Aerolinea, Clase, Costo, Duracion, Tipo).
+arco(sjo, pty, vuelo(cm404, avianca, negocios, 500, 1, comercial)).
+arco(sjo, pty, vuelo(cm405, copa, negocios, 1500, 1, charter)).
+arco(sjo, pty, vuelo(cm406, american, economica, 500, 1, comercial)).
+arco(pty, phx, vuelo(ua105, united, economica, 900, 6, comercial)).
+arco(pty, phx, vuelo(ua106, united, negocios, 1900, 6, charter)).
+arco(pty, phx, vuelo(ua107, copa, economica, 900, 6, comercial)).
+arco(sjo, mia, vuelo(ta321, avianca, economica, 450, 3, comercial)).
+arco(mia, phx, vuelo(aa876, american, negocios, 1300, 5, comercial)).
+arco(sjo, phx, vuelo(ch101, charter_air, economica, 1100, 7, charter)).
+arco(sjo, pty, vuelo(ch202, charter_air, negocios, 1200, 1, charter)).
+arco(phx, sjo, vuelo(ab976, american, negocios, 600, 8, comercial)).
+arco(pty, phx, vuelo(ua777, united, negocios, 1500, 6, comercial)).
+arco(sjo, fra, vuelo(lh450, lufthansa, negocios, 2000, 11, comercial)).
+arco(fra, phx, vuelo(fra203, united, economica, 1300, 12, comercial)).
+arco(sjo, mex, vuelo(am888, aeromexico, economica, 400, 2, comercial)).
+arco(sjo, bog, vuelo(cp201, copa, economica, 350, 2, comercial)).
+arco(sjo, bog, vuelo(av450, avianca, negocios, 550, 2, comercial)).
+arco(sjo, lim, vuelo(la302, latam, economica, 480, 3, comercial)).
+arco(sjo, lim, vuelo(la303, latam, negocios, 780, 3, comercial)).
+arco(sjo, dfw, vuelo(aa201, american, economica, 650, 4, comercial)).
+arco(sjo, yyz, vuelo(ac100, air_canada, negocios, 900, 5, comercial)).
+arco(bog, mia, vuelo(av451, avianca, economica, 400, 3, comercial)).
+arco(bog, mia, vuelo(av452, avianca, negocios, 800, 3, comercial)).
+arco(lim, phx, vuelo(la305, latam, economica, 750, 7, comercial)).
+arco(lim, phx, vuelo(la306, latam, negocios, 1400, 7, comercial)).
+arco(dfw, phx, vuelo(aa202, american, economica, 300, 2, comercial)).
+arco(dfw, phx, vuelo(aa203, american, negocios, 600, 2, comercial)).
+arco(yyz, phx, vuelo(ac101, air_canada, economica, 450, 4, comercial)).
+arco(mia, atl, vuelo(dl401, delta, economica, 200, 2, comercial)).
+arco(mia, atl, vuelo(dl402, delta, negocios, 500, 2, comercial)).
+arco(atl, phx, vuelo(dl403, delta, economica, 300, 3, comercial)).
+arco(atl, phx, vuelo(dl404, delta, negocios, 700, 3, comercial)).
+arco(mex, lax, vuelo(am889, aeromexico, economica, 350, 3, comercial)).
+arco(mex, phx, vuelo(am890, aeromexico, economica, 320, 3, comercial)).
+arco(mex, phx, vuelo(am891, aeromexico, negocios, 720, 3, comercial)).
+arco(sjo, bog, vuelo(ch103, charter_air, negocios, 800, 2, charter)).
+arco(bog, phx, vuelo(ch104, charter_air, negocios, 1500, 8, charter)).
+arco(sjo, mex, vuelo(ch105, charter_air, economica, 750, 2, charter)).
+arco(pty, lim, vuelo(pr100, priority_air, negocios, 900, 3, charter)).
+arco(lim, fra, vuelo(pr101, priority_air, negocios, 2200, 12, charter)).
+arco(fra, mad, vuelo(lh451, lufthansa, economica, 200, 2, comercial)).
+arco(mad, mia, vuelo(lh452, lufthansa, economica, 800, 9, comercial)).
+arco(lhr, phx, vuelo(ba100, british_airways, negocios, 1700, 10, comercial)).
+arco(cdg, mia, vuelo(af200, air_france, economica, 900, 8, comercial)).
+arco(sjo, cdg, vuelo(af201, air_france, negocios, 1800, 10, comercial)).
 
 % Lista de aerolíneas disponibles
 aerolinea(copa).
@@ -144,7 +137,6 @@ ciudad(lax) --> [los, angeles].
 ciudad(mad) --> [madrid].
 ciudad(lhr) --> [londres].
 ciudad(cdg) --> [paris].
-
 
 verbo_ir --> [viajar, a]; [ir, a]; [voy, a]; [deseo, viajar, a]; [quiero, ir, a]; [me, gustaria, viajar, a].
 
@@ -311,40 +303,71 @@ normalizar_filtros(TipoFiltro, AerolineaPref, ClasePref, Pres, PriorizarDuracion
         PriorizarDuracion = no
     ).
 
-% Función para ordenar vuelos por duración
-ordenar_por_duracion(VuelosIn, VuelosOut) :-
-    predsort(comparar_duracion, VuelosIn, VuelosOut).
+% ALGORITMOS DE BÚSQUEDA EN GRAFO --------------------------------------
 
-% Comparador para ordenar vuelos directos por duración
-comparar_duracion(Orden, [_, _, _, _, _, _, Dur1], [_, _, _, _, _, _, Dur2]) :-
+% Predicado para verificar si una arista cumple con los filtros
+arista_filtrada(Origen, Destino, vuelo(Num, Aer, Cla, Cos, Dur, Tipo), TipoFiltro, AerFiltro, ClaFiltro, Pres) :-
+    arco(Origen, Destino, vuelo(Num, Aer, Cla, Cos, Dur, Tipo)),
+    % Verificar tipo de vuelo
+    (var(TipoFiltro) ; Tipo = TipoFiltro),
+    % Verificar aerolínea
+    (var(AerFiltro) ; Aer = AerFiltro),
+    % Verificar clase
+    (var(ClaFiltro) ; Cla = ClaFiltro),
+    % Verificar presupuesto
+    (var(Pres) ; (number(Pres), Cos =< Pres)).
+
+% Búsqueda de vuelos directos que cumplen los filtros
+buscar_vuelos_directos(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
+    findall([Num, Origen, Destino, Aer, Cla, Cos, Dur, Tipo],
+            arista_filtrada(Origen, Destino, vuelo(Num, Aer, Cla, Cos, Dur, Tipo), TipoFiltro, AerFiltro, ClaFiltro, Pres),
+            Vuelos).
+
+% Búsqueda de vuelos con una escala que cumplen los filtros
+buscar_vuelos_con_escala(Origen, Destino, TipoFiltro, AerFiltro, ClaFiltro, Pres, Vuelos) :-
+    findall([Num1, Origen, Escala, Aer1, Cla1, Cos1, Dur1, Tipo1, Num2, Escala, Destino, Aer2, Cla2, Cos2, Dur2, Tipo2],
+            (arista_filtrada(Origen, Escala, vuelo(Num1, Aer1, Cla1, Cos1, Dur1, Tipo1), TipoFiltro, AerFiltro, ClaFiltro, _),
+             arista_filtrada(Escala, Destino, vuelo(Num2, Aer2, Cla2, Cos2, Dur2, Tipo2), TipoFiltro, AerFiltro, ClaFiltro, _),
+             Escala \= Destino, Escala \= Origen,  % Asegurarnos que la escala no sea ni origen ni destino
+             % Verificación conjunta del presupuesto
+             CostoTotal is Cos1 + Cos2,
+             (var(Pres) ; (number(Pres), CostoTotal =< Pres)),
+             % Para flexibilidad, permitimos que al menos uno de los vuelos cumpla con preferencias específicas
+             ((var(AerFiltro) ; Aer1 = AerFiltro ; Aer2 = AerFiltro)),
+             ((var(ClaFiltro) ; Cla1 = ClaFiltro ; Cla2 = ClaFiltro))
+            ),
+            Vuelos).
+
+% Ordenar por duración
+ordenar_por_duracion(VuelosDirectos, VuelosOrdenados) :-
+    predsort(comparar_duracion, VuelosDirectos, VuelosOrdenados).
+
+% Comparador de duración para vuelos directos
+comparar_duracion(Orden, [_, _, _, _, _, _, Dur1, _], [_, _, _, _, _, _, Dur2, _]) :-
     (Dur1 < Dur2 -> Orden = (<) ; Orden = (>)).
 
-% Comparador para ordenar vuelos con escala por duración total
+% Ordenar por duración total para vuelos con escala
+ordenar_por_duracion_escala(VuelosEscala, VuelosOrdenados) :-
+    predsort(comparar_duracion_escala, VuelosEscala, VuelosOrdenados).
+
+% Comparador de duración para vuelos con escala
 comparar_duracion_escala(Orden,
-    [_, _, _, _, _, _, Dur1, _, _, _, _, _, _, Dur2],
-    [_, _, _, _, _, _, Dur3, _, _, _, _, _, _, Dur4]) :-
+    [_, _, _, _, _, _, Dur1, _, _, _, _, _, _, Dur2, _, _],
+    [_, _, _, _, _, _, Dur3, _, _, _, _, _, _, Dur4, _, _]) :-
     DurTotal1 is Dur1 + Dur2,
     DurTotal2 is Dur3 + Dur4,
     (DurTotal1 < DurTotal2 -> Orden = (<) ; Orden = (>)).
 
+% BÚSQUEDA PRINCIPAL DE VUELOS -----------------------------------------
+
 buscar_vuelo :-
     origen(O), destino(D),
-
     normalizar_filtros(TipoFiltro, AerolineaPref, ClasePref, Pres, PriorizarDuracion),
 
-    % VUELOS DIRECTOS
-    findall([Num, O, D, Aer, Cla, Cos, Dur],
-        ( vuelo(Num, O, D, Aer, Cla, Cos, Dur, TipoVuelo),
-          % Evaluar tipo de vuelo
-          (TipoFiltro == _ ; TipoVuelo = TipoFiltro),
-          % Evaluar clase
-          (ClasePref == _ ; Cla = ClasePref),
-          % Evaluar aerolínea
-          (AerolineaPref == _ ; Aer = AerolineaPref),
-          % Evaluar presupuesto
-          (var(Pres) ; (number(Pres), Cos =< Pres))
-        ),
-        VuelosDirectosNoOrdenados),
+    writeln("Buscando vuelos..."),
+
+    % Buscar vuelos directos
+    buscar_vuelos_directos(O, D, TipoFiltro, AerolineaPref, ClasePref, Pres, VuelosDirectosNoOrdenados),
 
     % Ordenar por duración si corresponde
     (PriorizarDuracion = si ->
@@ -353,64 +376,44 @@ buscar_vuelo :-
         VuelosDirectos = VuelosDirectosNoOrdenados
     ),
 
-    writeln("Buscando vuelos..."),
-
-    ( VuelosDirectos \= [] ->
+    % Verificar si encontramos vuelos directos
+    (VuelosDirectos \= [] ->
         writeln("¡Encontré vuelos directos que cumplen con sus requisitos!"),
-        % Seleccionamos el primer vuelo (el de menor duración si PriorizarDuracion = si)
-        VuelosDirectos = [[Num1, O1, D1, Aer1, Cla1, Cos1, Dur1] | _],
+        % Seleccionamos el mejor vuelo
+        VuelosDirectos = [[Num, O, D, Aer, Cla, Cos, Dur, Tipo] | _],
         (PriorizarDuracion = si ->
-            format("Su vuelo más rápido sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas. Gracias por usar TravelAgencyLog.~n",
-                   [Num1, O1, D1, Aer1, Cla1, Cos1, Dur1])
+            format("Su vuelo más rápido sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas (~w). Gracias por usar TravelAgencyLog.~n",
+                   [Num, O, D, Aer, Cla, Cos, Dur, Tipo])
         ;
-            format("Su vuelo sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas. Gracias por usar TravelAgencyLog.~n",
-                   [Num1, O1, D1, Aer1, Cla1, Cos1, Dur1])
+            format("Su vuelo sería el ~w de ~w a ~w con ~w en clase ~w por ~w dólares, duración ~w horas (~w). Gracias por usar TravelAgencyLog.~n",
+                   [Num, O, D, Aer, Cla, Cos, Dur, Tipo])
         )
     ;
         writeln("No hay vuelos directos disponibles, buscando vuelos con escala..."),
-        % VUELOS CON ESCALA - VERSIÓN MODIFICADA
-        findall([Num1, O, M, Aer1, Cla1, Cos1, Dur1, Num2, M, D, Aer2, Cla2, Cos2, Dur2],
-            ( vuelo(Num1, O, M, Aer1, Cla1, Cos1, Dur1, TipoVuelo1),
-              vuelo(Num2, M, D, Aer2, Cla2, Cos2, Dur2, TipoVuelo2),
-              M \= D, M \= O,  % Asegurarnos que la escala no sea ni origen ni destino
+        % Buscar vuelos con escala
+        buscar_vuelos_con_escala(O, D, TipoFiltro, AerolineaPref, ClasePref, Pres, VuelosEscalaNoOrdenados),
 
-              % Evaluar tipo de vuelo
-              ((TipoFiltro == _) -> true ;
-                (TipoVuelo1 = TipoFiltro, TipoVuelo2 = TipoFiltro)),
-
-              % Evaluar clase - modificado para ser más flexible
-              ((ClasePref == _) -> true ;
-                (Cla1 = ClasePref ; Cla2 = ClasePref)),
-
-              % Evaluar aerolínea - modificado para ser más flexible
-              ((AerolineaPref == _) -> true ;
-                (Aer1 = AerolineaPref ; Aer2 = AerolineaPref)),
-
-              % Evaluar presupuesto
-              TotalCost is Cos1 + Cos2,
-              (var(Pres) ; (number(Pres), TotalCost =< Pres))
-            ),
-            VuelosConEscalaNoOrdenados),
-
-        % Ordenar vuelos con escala por duración total si corresponde
+        % Ordenar por duración total si corresponde
         (PriorizarDuracion = si ->
-            predsort(comparar_duracion_escala, VuelosConEscalaNoOrdenados, VuelosConEscala)
+            ordenar_por_duracion_escala(VuelosEscalaNoOrdenados, VuelosEscala)
         ;
-            VuelosConEscala = VuelosConEscalaNoOrdenados
+            VuelosEscala = VuelosEscalaNoOrdenados
         ),
 
-        ( VuelosConEscala = [] ->
+        % Verificar si encontramos vuelos con escala
+        (VuelosEscala = [] ->
             writeln("Lamentablemente no tenemos un vuelo que se ajuste a sus necesidades. Muchas gracias por utilizar TravelAgencyLog.")
         ;
-            VuelosConEscala = [[Num1, O1, M1, Aer1, Cla1, Cos1, Dur1, Num2, _, D1, Aer2, Cla2, Cos2, Dur2] | _],
+            VuelosEscala = [[Num1, O, M, Aer1, Cla1, Cos1, Dur1, Tipo1, Num2, M, D, Aer2, Cla2, Cos2, Dur2, Tipo2] | _],
             TotalCost is Cos1 + Cos2,
             DurTotal is Dur1 + Dur2,
             (PriorizarDuracion = si ->
-                format("Su vuelo más rápido sería: ~w de ~w a ~w con ~w en clase ~w (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
-                    [Num1, O1, M1, Aer1, Cla1, Dur1, Num2, M1, D1, Aer2, Cla2, Dur2, TotalCost, DurTotal])
+                format("Su vuelo más rápido sería: ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
+                    [Num1, O, M, Aer1, Cla1, Tipo1, Dur1, Num2, M, D, Aer2, Cla2, Tipo2, Dur2, TotalCost, DurTotal])
             ;
-                format("Su vuelo sería: ~w de ~w a ~w con ~w en clase ~w (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
-                    [Num1, O1, M1, Aer1, Cla1, Dur1, Num2, M1, D1, Aer2, Cla2, Dur2, TotalCost, DurTotal])
+                format("Su vuelo sería: ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h), y luego ~w de ~w a ~w con ~w en clase ~w (~w) (duración ~w h). Costo total: $~w. Duración total: ~w h. Gracias por usar TravelAgencyLog.~n",
+                    [Num1, O, M, Aer1, Cla1, Tipo1, Dur1, Num2, M, D, Aer2, Cla2, Tipo2, Dur2, TotalCost, DurTotal])
             )
         )
     ).
+
