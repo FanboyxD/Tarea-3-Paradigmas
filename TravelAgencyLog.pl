@@ -17,8 +17,7 @@ aeropuerto('Madrid, España', mad).
 aeropuerto('Londres, Reino Unido', lhr).
 aeropuerto('París, Francia', cdg).
 
-% Arcos: arco(Origen, Destino, Vuelo).
-% Donde Vuelo es vuelo(Numero, Aerolinea, Clase, Costo, Duracion, Tipo).
+% Arcos: arco(Origen, Destino,vuelo(Numero, Aerolinea, Clase, Costo, Duracion, Tipo).
 arco(sjo, pty, vuelo(cm404, avianca, negocios, 500, 1, comercial)).
 arco(sjo, pty, vuelo(cm405, copa, negocios, 1500, 1, charter)).
 arco(sjo, pty, vuelo(cm406, american, economica, 500, 1, comercial)).
