@@ -114,6 +114,7 @@ oracion_destino(destino(Ciudad)) -->
 % Reglas para palabras que se pueden ignorar si aparecen
 % Palabras de saludo
 saludo --> [hola].
+saludo --> [hola, travelagencylog].
 saludo --> [buenos, dias].
 saludo --> [buenas, tardes].
 saludo --> [buenas, noches].
@@ -151,6 +152,7 @@ oracion_charter(si) --> [deseo, un, vuelo], vuelo_charter.
 oracion_charter(si) --> [me, gustaria, un], vuelo_charter.
 oracion_charter(si) --> [si].
 oracion_charter(no) --> [no, necesariamente].
+oracion_charter(no) --> [no, necesariamente, deseo, el ,vuelo ,mas ,barato].
 oracion_charter(no) --> [no].
 
 clase(economica) --> [economica].
